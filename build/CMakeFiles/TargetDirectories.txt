@@ -1,0 +1,4 @@
+/Users/tand/CLion/alOS/build/CMakeFiles/kernel.bin.dir
+/Users/tand/CLion/alOS/build/CMakeFiles/run.dir
+/Users/tand/CLion/alOS/build/CMakeFiles/edit_cache.dir
+/Users/tand/CLion/alOS/build/CMakeFiles/rebuild_cache.dir

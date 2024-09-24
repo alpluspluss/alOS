@@ -14,14 +14,20 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 set(BOOT_SRC
         boot/first_stage-x86_64.asm
         boot/second_stage-x86_64.asm
+        kernel/kernel.c
 )
 set(KERNEL_SRC
         kernel/entry-x86_64.asm
         kernel/kernel.c
+        kernel/kernel.c
+        kernel/kernel.c
+        kernel/kernel.c
+        kernel/kernel.c
 )
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/linker.ld)
 
-add_executable(kernel.bin ${BOOT_SRC} ${KERNEL_SRC})
+add_executable(kernel.bin ${BOOT_SRC} ${KERNEL_SRC}
+        kernel/kernel.c)
 set_target_properties(kernel.bin PROPERTIES
         LINK_FLAGS "-T ${LINKER_SCRIPT} -nostdlib"
         OUTPUT_NAME "kernel"

@@ -16,8 +16,8 @@ BUILD_DIR = bin
 BOOT_DIR = boot
 KERNEL_DIR = kernel
 
-BOOT_SRC = $(BOOT_DIR)/first_stage-$(ARCH).asm $(BOOT_DIR)/second_stage-$(ARCH).asm
-KERNEL_SRC = $(KERNEL_DIR)/entry-$(ARCH).asm $(KERNEL_DIR)/kernel.c
+BOOT_SRC = $(BOOT_DIR)/$(ARCH)/first_stage.asm $(BOOT_DIR)/$(ARCH)/second_stage.asm
+KERNEL_SRC = $(KERNEL_DIR)/entry/$(ARCH).asm $(KERNEL_DIR)/kernel.c
 
 BOOT_OBJ = $(patsubst $(BOOT_DIR)/%.asm, $(BUILD_DIR)/%.o, $(filter %.asm, $(BOOT_SRC)))
 KERNEL_OBJ = $(patsubst $(KERNEL_DIR)/%.asm, $(BUILD_DIR)/%.o, $(filter %.asm,$(KERNEL_SRC))) \
@@ -29,13 +29,13 @@ BOOTLOADER_IMG = $(BUILD_DIR)/bootloader-$(ARCH).img
 
 all: $(BOOTLOADER_IMG)
 
-$(BUILD_DIR)/first_stage.bin: $(BOOT_DIR)/first_stage-$(ARCH).asm | $(BUILD_DIR)
+$(BUILD_DIR)/first_stage.bin: $(BOOT_DIR)/$(ARCH)/first_stage.asm | $(BUILD_DIR)
 	$(AS) $(NASMFLAGS_BIN) $< -o $@
 
-$(BUILD_DIR)/second_stage.bin: $(BOOT_DIR)/second_stage-$(ARCH).asm | $(BUILD_DIR)
+$(BUILD_DIR)/second_stage.bin: $(BOOT_DIR)/$(ARCH)/second_stage.asm | $(BUILD_DIR)
 	$(AS) $(NASMFLAGS_BIN) $< -o $@
 
-$(BUILD_DIR)/entry-$(ARCH).o: $(KERNEL_DIR)/entry-$(ARCH).asm | $(BUILD_DIR)
+$(BUILD_DIR)/entry-$(ARCH).o: $(KERNEL_DIR)/entry/$(ARCH).asm | $(BUILD_DIR)
 	$(AS) $(NASMFLAGS) $< -o $@
 
 $(BUILD_DIR)/kernel.o: $(KERNEL_DIR)/kernel.c | $(BUILD_DIR)

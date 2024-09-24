@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/Users/tand/CLion/alOS/build",
+  "command": "x86_64-elf-gcc -ffreestanding -m64 -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.0 -o CMakeFiles/kernel.bin.dir/kernel/kernel.c.o -c /Users/tand/CLion/alOS/kernel/kernel.c",
+  "file": "/Users/tand/CLion/alOS/kernel/kernel.c",
+  "output": "CMakeFiles/kernel.bin.dir/kernel/kernel.c.o"
+}
+]
