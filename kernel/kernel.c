@@ -2,7 +2,7 @@
 #define VGA_HEIGHT 25
 #define VGAMEMORY ((volatile unsigned short*) 0xB8000)
 
-inline void clear_vga_buffer(unsigned char color)
+void clear_vga_buffer(unsigned char color)
 {
     unsigned short blank = (color << 8) | ' ';
     for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; ++i)
