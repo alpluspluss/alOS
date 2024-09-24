@@ -18,7 +18,6 @@ set(BOOT_SRC
 set(KERNEL_SRC
         kernel/entry-x86_64.asm
         kernel/kernel.c
-        kernel/kernel.c
 )
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/linker.ld)
 

@@ -7,12 +7,13 @@
 [BITS 16]
 [ORG 0x7E00]
 
-section .rodata
-KERNEL_OFFSET_HIGH equ 0xFFFF_FFFF_8000_0000
-KERNEL_OFFSET_LOW equ 0x100000
+KERNEL_OFFSET_HIGH  equ 0xFFFF_FFFF_8000_0000
+KERNEL_LOAD_SEGMENT equ 0x1000
+KERNEL_LOAD_OFFSET  equ 0x0000
+KERNEL_OFFSET_LOW   equ (KERNEL_LOAD_SEGMENT << 4) + KERNEL_LOAD_OFFSET
 
-section .text
 start:
+    ; just before getting here DL=bootdrive
     ; set up segments & stack at 0x9000
     xor ax, ax
     mov ds, ax
@@ -24,8 +25,6 @@ start:
     mov si, stage2Message
     call print_16bit
 
-    mov dl, [bootDrive]
-
     call enable_A20                 ; enable A20 for mem access beyond 1 MB
     call load_kernel                ; load the rest of stage 2 and kernel
     call enable_protected_mode      ; load GDT and switch to protected mode
@@ -34,11 +33,14 @@ start:
 ; but has some extras & some stuff removed
 load_kernel:
     mov ah, 0x02            ; BIOS read sector function
-    mov al, 6               ; read 6 sectors / time
+    mov al, 9               ; read 9 sectors / time
     mov ch, 0               ; cylinder number
     mov cl, 5               ; start from sector 5
     mov dh, 0               ; Head number
-    mov bx, KERNEL_OFFSET_LOW
+    push KERNEL_LOAD_SEGMENT
+    pop es
+    mov bx, KERNEL_LOAD_OFFSET
+                            ; ES:BX is location where sectors will be loaded
     int 0x13                ; read disk op
     jc disk_error           ; jump if disk error
     ret
@@ -50,6 +52,7 @@ enable_A20:
     ret
 
 enable_protected_mode:
+    xchg bx, bx
     cli                             ; disable interrupt
     lgdt [gdt_descriptor]           ; load GDT descriptor
 
@@ -116,12 +119,12 @@ enable_long_mode:
     or eax, 1 << 8
     wrmsr
 
+    ; enable PAE and PGE bits in CR0
     mov eax, 10100000b
     mov cr4, eax
 
-    ; enable PAE and PGE bits in CR0
     mov eax, cr0
-    or eax, 1 << 32                 ; enable paging
+    or eax, 1 << 31                 ; enable paging
     mov cr0, eax
     ret
 
@@ -198,15 +201,11 @@ disk_error:
     cli
     hlt
 
-section .data
-
-bootDrive db 0
 stage2Message db 'Jumped to stage 2', 13, 10, 0
 diskErrorMessage db 'Disk error in stage 2', 13, 10, 0
 longModeMessage db 'Entered long mode', 0
 protectedModeMessage db 'Entered protected mode', 0
 
-section .rodata
 align 16
 gdt_start:
     dq 0x0000000000000000           ; null descriptor
@@ -233,6 +232,3 @@ align 16
 stack_bottom:
     resb 16384
 stack_top:
-
-section .text
-times 512 * 3 - ($ - $$) db 0       ; pad to 3 sectors
